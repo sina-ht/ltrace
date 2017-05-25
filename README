@@ -1,3 +1,8 @@
+Original repository is: https://anonscm.debian.org/git/collab-maint/ltrace.git
+This version is modified by sina_ht.
+
+
+
 This directory contains sources of ltrace.  See the file configure.ac
 to see what version this is.
 
