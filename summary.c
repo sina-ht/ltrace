@@ -167,7 +167,7 @@ summary_account_call(struct library_symbol *libsym, struct timedelta spent)
 			options.summary = 0;
 			return;
 		}
-		DICT_INIT(dict_opt_c, char *, struct opt_c_struct,
+		DICT_INIT(dict_opt_c, const char *, const struct opt_c_struct,
 			  dict_hash_string, dict_eq_string, NULL);
 	}
 

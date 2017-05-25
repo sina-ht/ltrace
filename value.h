@@ -76,8 +76,8 @@ void value_init_detached(struct value *value, struct value *parent,
 
 /* Set TYPE.  This releases old type if it was owned.  TYPE is owned
  * and released if OWN_TYPE.  */
-void value_set_type(struct value *value,
-		    struct arg_type_info *type, int own_type);
+void value_set_type(const struct value *value,
+		    const struct arg_type_info *type, int own_type);
 
 /* Transfers the ownership of VALUE's type, if any, to the caller.
  * This doesn't reset the VALUE's type, but gives up ownership if
@@ -86,7 +86,7 @@ void value_take_type(struct value *value,
 		     struct arg_type_info **type, int *own_type);
 
 /* Release the data held by VALP, if any, but not the type.  */
-void value_release(struct value *valp);
+void value_release(const struct value *valp);
 
 /* Value resides in inferior, on given ADDRESS.  */
 void value_in_inferior(struct value *valp, arch_addr_t address);
@@ -94,7 +94,7 @@ void value_in_inferior(struct value *valp, arch_addr_t address);
 /* Destroy the value.  This is like value_release, but it additionally
  * frees the value type, if it's own_type.  It doesn't free the VAL
  * pointer itself.  */
-void value_destroy(struct value *val);
+void value_destroy(const struct value *val);
 
 /* Set the data held by VALP to VALUE.  This also sets the value's
  * where to VAL_LOC_WORD.  */
@@ -127,7 +127,7 @@ unsigned char *value_get_raw_data(struct value *val);
 
 /* Copy value VAL into the area pointed-to by RETP.  Return 0 on
  * success or a negative value on failure.  */
-int value_clone(struct value *retp, const struct value *val);
+int value_clone(const struct value *retp, const struct value *val);
 
 /* Give a size of given value.  Return (size_t)-1 for error.  This is
  * a full size of the value.  In particular for arrays, it returns

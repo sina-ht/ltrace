@@ -24,7 +24,7 @@
 #include "vect.h"
 
 static void *
-slot(struct vect *vec, size_t i)
+slot(const struct vect *vec, size_t i)
 {
 	return ((unsigned char *)vec->data) + vec->elt_size * i;
 }
@@ -50,11 +50,13 @@ copy_elt(void *tgt, const void *src, void *data)
 }
 
 int
-vect_clone(struct vect *target, const struct vect *source,
+vect_clone(const struct vect *__target, const struct vect *source,
 	   int (*clone)(void *tgt, const void *src, void *data),
 	   void (*dtor)(void *elt, void *data),
 	   void *data)
 {
+	struct vect *target = (struct vect *)__target;
+
 	vect_init(target, source->elt_size);
 	if (vect_reserve(target, source->size) < 0)
 		return -1;
@@ -62,7 +64,7 @@ vect_clone(struct vect *target, const struct vect *source,
 	if (clone == NULL) {
 		assert(dtor == NULL);
 		clone = copy_elt;
-		data = target;
+		data = (void *)target;
 	} else {
 		assert(dtor != NULL);
 	}
@@ -129,9 +131,11 @@ vect_pushback(struct vect *vec, void *eltp)
 }
 
 void
-vect_erase(struct vect *vec, size_t start, size_t end,
+vect_erase(const struct vect *__vec, size_t start, size_t end,
 	   void (*dtor)(void *emt, void *data), void *data)
 {
+	struct vect *vec = (struct vect *)__vec;
+
 	assert(start < vect_size(vec) || start == 0);
 	assert(end <= vect_size(vec));
 
@@ -157,7 +161,7 @@ vect_popback(struct vect *vec,
 }
 
 void
-vect_destroy(struct vect *vec, void (*dtor)(void *emt, void *data), void *data)
+vect_destroy(const struct vect *vec, void (*dtor)(void *emt, void *data), void *data)
 {
 	if (vec == NULL)
 		return;

@@ -53,7 +53,7 @@ void vect_init(struct vect *vec, size_t elt_size);
  * DTOR is non-NULL, it is invoked on all hitherto created elements
  * with the same DATA.  If one of CLONE, DTOR is non-NULL, then both
  * have to be.  */
-int vect_clone(struct vect *target, const struct vect *source,
+int vect_clone(const struct vect *target, const struct vect *source,
 	       int (*clone)(void *tgt, const void *src, void *data),
 	       void (*dtor)(void *elt, void *data),
 	       void *data);
@@ -66,7 +66,7 @@ int vect_clone(struct vect *target, const struct vect *source,
 		assert(_source_vec->elt_size == sizeof(ELT_TYPE));	\
 		/* Check that callbacks are typed properly.  */		\
 		void (*_dtor_callback)(ELT_TYPE *, void *) = DTOR;	\
-		int (*_clone_callback)(ELT_TYPE *, const ELT_TYPE *,	\
+		int (*_clone_callback)(ELT_TYPE *, ELT_TYPE *,	\
 				       void *) = CLONE;			\
 		vect_clone((TGT_VEC), _source_vec,			\
 			   (int (*)(void *, const void *,		\
@@ -111,7 +111,7 @@ void vect_popback(struct vect *vec,
 /* Drop elements START (inclusive) to END (non-inclusive) of VECP.  If
  * DTOR is non-NULL, it is called on each of the removed elements.
  * DATA is passed verbatim to DTOR.  */
-void vect_erase(struct vect *vec, size_t start, size_t end,
+void vect_erase(const struct vect *vec, size_t start, size_t end,
 		void (*dtor)(void *emt, void *data), void *data);
 
 #define VECT_ERASE(VECP, ELT_TYPE, START, END, DTOR, DATA)		\
@@ -140,7 +140,7 @@ int vect_reserve_additional(struct vect *vec, size_t count);
 /* Destroy VEC.  If DTOR is non-NULL, then it's called on each element
  * of the vector.  DATA is passed to DTOR verbatim.  The memory
  * pointed-to by VEC is not freed.  */
-void vect_destroy(struct vect *vec,
+void vect_destroy(const struct vect *vec,
 		  void (*dtor)(void *emt, void *data), void *data);
 
 /* Destroy VEC, which holds elements of type ELT_TYPE, using DTOR.  */

@@ -40,21 +40,23 @@ val_dict_init(struct value_dict *dict)
 }
 
 static int
-value_clone_cb(struct value *tgt, const struct value *src, void *data)
+value_clone_cb(const struct value *tgt, const struct value *src, void *data)
 {
 	return value_clone(tgt, src);
 }
 
 static void
-value_dtor(struct value *val, void *data)
+value_dtor(const struct value *val, void *data)
 {
 	value_destroy(val);
 }
 
 static int
-named_value_clone(struct named_value *tgt,
+named_value_clone(const struct named_value *__tgt,
 		  const struct named_value *src, void *data)
 {
+	struct named_value *tgt = (struct named_value *)__tgt;
+
 	tgt->name = strdup(src->name);
 	if (tgt->name == NULL)
 		return -1;
@@ -67,7 +69,7 @@ named_value_clone(struct named_value *tgt,
 }
 
 static void
-named_value_dtor(struct named_value *named, void *data)
+named_value_dtor(const struct named_value *named, void *data)
 {
 	if (named->own_name)
 		free((char *)named->name);
@@ -77,13 +79,13 @@ named_value_dtor(struct named_value *named, void *data)
 int
 val_dict_clone(struct value_dict *target, struct value_dict *source)
 {
-	if (VECT_CLONE(&target->numbered, &source->numbered, struct value,
+	if (VECT_CLONE(&target->numbered, &source->numbered, const struct value,
 		       value_clone_cb, value_dtor, NULL) < 0)
 		return -1;
 
-	if (VECT_CLONE(&target->named, &source->named, struct named_value,
+	if (VECT_CLONE(&target->named, &source->named, const struct named_value,
 		       named_value_clone, named_value_dtor, NULL) < 0) {
-		VECT_DESTROY(&target->numbered, struct value, value_dtor, NULL);
+		VECT_DESTROY(&target->numbered, const struct value, value_dtor, NULL);
 		return -1;
 	}
 
@@ -143,6 +145,6 @@ val_dict_destroy(struct value_dict *dict)
 	if (dict == NULL)
 		return;
 
-	VECT_DESTROY(&dict->numbered, struct value, value_dtor, NULL);
-	VECT_DESTROY(&dict->named, struct named_value, named_value_dtor, NULL);
+	VECT_DESTROY(&dict->numbered, const struct value, value_dtor, NULL);
+	VECT_DESTROY(&dict->named, const struct named_value, named_value_dtor, NULL);
 }

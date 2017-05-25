@@ -58,13 +58,15 @@ value_init_detached(struct value *valp, struct value *parent,
 }
 
 void
-value_set_type(struct value *value, struct arg_type_info *type, int own_type)
+value_set_type(const struct value *__value, const struct arg_type_info *type, int own_type)
 {
+	struct value *value = (struct value *)__value;
+
 	if (value->own_type) {
 		type_destroy(value->type);
 		free(value->type);
 	}
-	value->type = type;
+	value->type = (struct arg_type_info *)type;
 	value->own_type = own_type;
 }
 
@@ -78,8 +80,10 @@ value_take_type(struct value *value, struct arg_type_info **type,
 }
 
 void
-value_release(struct value *val)
+value_release(const struct value *__val)
 {
+	struct value *val = (struct value *)__val;
+
 	if (val == NULL)
 		return;
 	if (val->where == VAL_LOC_COPY) {
@@ -89,7 +93,7 @@ value_release(struct value *val)
 }
 
 void
-value_destroy(struct value *val)
+value_destroy(const struct value *val)
 {
 	if (val == NULL)
 		return;
@@ -186,8 +190,9 @@ value_get_raw_data(struct value *val)
 }
 
 int
-value_clone(struct value *retp, const struct value *val)
+value_clone(const struct value *__retp, const struct value *val)
 {
+	struct value *retp = (struct value *)__retp;
 	*retp = *val;
 
 	if (val->own_type) {

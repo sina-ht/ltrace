@@ -154,7 +154,7 @@ process_bare_init(struct process *proc, const char *filename,
 		if (proc->breakpoints == NULL)
 			goto unlist_and_fail;
 		DICT_INIT(proc->breakpoints,
-			  arch_addr_t, struct breakpoint *,
+			  const arch_addr_t, const struct breakpoint *,
 			  arch_addr_hash, arch_addr_eq, NULL);
 	} else {
 		proc->breakpoints = NULL;

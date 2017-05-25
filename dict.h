@@ -56,8 +56,8 @@ void dict_init(struct dict *dict,
 #define DICT_INIT(DICTP, KEY_TYPE, VALUE_TYPE, HASH1, EQ, HASH2)	\
 	({								\
 		/* Check that callbacks are typed properly.  */		\
-		size_t (*_hash1_callback)(const KEY_TYPE *) = HASH1;	\
-		int (*_eq_callback)(const KEY_TYPE *, const KEY_TYPE *) = EQ; \
+		size_t (*_hash1_callback)(KEY_TYPE *) = HASH1;	\
+		int (*_eq_callback)(KEY_TYPE *, KEY_TYPE *) = EQ; \
 		dict_init(DICTP, sizeof(KEY_TYPE), sizeof(VALUE_TYPE),	\
 			  (size_t (*)(const void *))_hash1_callback,	\
 			  (int (*)(const void *, const void *))_eq_callback, \
@@ -90,10 +90,10 @@ int dict_clone(struct dict *target, const struct dict *source,
 		assert(_source_d->values.elt_size == sizeof(VALUE_TYPE)); \
 		/* Check that callbacks are typed properly.  */		\
 		void (*_key_dtor_cb)(KEY_TYPE *, void *) = DTOR_KEY;	\
-		int (*_key_clone_cb)(KEY_TYPE *, const KEY_TYPE *,	\
+		int (*_key_clone_cb)(KEY_TYPE *, KEY_TYPE *,	\
 				     void *) = CLONE_KEY;		\
 		void (*_value_dtor_cb)(VALUE_TYPE *, void *) = DTOR_VALUE; \
-		int (*_value_clone_cb)(VALUE_TYPE *, const VALUE_TYPE *, \
+		int (*_value_clone_cb)(VALUE_TYPE *, VALUE_TYPE *, \
 				       void *) = CLONE_VALUE;		\
 		dict_clone((TGT_DICTP), _source_d,			\
 			   (int (*)(void *, const void *,		\
